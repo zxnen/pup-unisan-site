@@ -1,0 +1,48 @@
+# Netlify configuration. NOT deployed automatically: connect the repo / deploy only after review.
+[build]
+  command = "node scripts/generate-config.mjs"
+  publish = "."
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Public pages only. Keep SUPABASE_URL and SUPABASE_ANON_KEY (public values) in Netlify's
+# environment variables. NEVER add the service-role key, DB password or OAuth secret here.
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    # Report-Only first: load every page, check the browser console for violations, then rename
+    # this header to Content-Security-Policy to enforce it.
+    Content-Security-Policy-Report-Only = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self'; img-src 'self' https: data:; connect-src 'self' https://*.supabase.co; frame-src https://www.youtube.com https://maps.google.com https://www.google.com; object-src 'none'; base-uri 'self'; form-action 'self'"
+
+[[headers]]
+  for = "/js/config.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+# Do not let the build output or SQL be browsed as site content.
+[[redirects]]
+  from = "/supabase/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/scripts/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/tests/*"
+  to = "/404.html"
+  status = 404
+  force = true
+[[redirects]]
+  from = "/docs/*"
+  to = "/404.html"
+  status = 404
+  force = true

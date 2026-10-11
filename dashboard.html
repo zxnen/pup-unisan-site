@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | PUP Unisan Campus</title>
+  <meta name="description" content="Your PUP Unisan student portal dashboard.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="dashboard">
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-mark" aria-hidden="true">PUP</span>
+        <span class="brand-text"><strong>Polytechnic University of the Philippines</strong><span>Unisan Campus &middot; <em>Tanglaw ng Bayan</em></span></span>
+      </a>
+      <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      <nav id="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="index.html#about">About</a></li>
+          <li><a href="programs.html">Academic Programs</a></li>
+          <li><a href="announcements.html">Announcements</a></li>
+          <li><a href="students.html">Students</a></li>
+          <li><a href="admission.html">Admissions</a></li>
+          <li><a href="faculty.html">Faculty</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li data-auth="out"><a href="login.html">Log in</a></li>
+          <li data-auth="in" hidden><a href="dashboard.html" aria-current="page">Dashboard</a></li>
+          <li data-auth="in" hidden><button type="button" id="logout-btn" class="nav-btn">Log out</button></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="container wide">
+    <div id="dashboard-root"><p class="state state-loading" role="status"><span class="spinner" aria-hidden="true"></span> Loading your dashboard…</p></div>
+    <noscript><p class="state state-error">JavaScript is required for the dashboard.</p></noscript>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>&copy; 2026 Polytechnic University of the Philippines &ndash; Unisan Campus. All rights reserved.</p>
+      <p><a href="privacy.html">Privacy Policy</a></p>
+      <p>Contact: <a href="mailto:unisan@pup.edu.ph">unisan@pup.edu.ph</a></p>
+      <p>Follow us: Facebook</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log in or Register | PUP Unisan Campus</title>
+  <meta name="description" content="Log in or create a PUP Unisan student portal account.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-page="login">
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-mark" aria-hidden="true">PUP</span>
+        <span class="brand-text"><strong>Polytechnic University of the Philippines</strong><span>Unisan Campus &middot; <em>Tanglaw ng Bayan</em></span></span>
+      </a>
+      <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      <nav id="site-nav" aria-label="Main">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="index.html#about">About</a></li>
+          <li><a href="programs.html">Academic Programs</a></li>
+          <li><a href="announcements.html">Announcements</a></li>
+          <li><a href="students.html">Students</a></li>
+          <li><a href="admission.html">Admissions</a></li>
+          <li><a href="faculty.html">Faculty</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li data-auth="out"><a href="login.html" aria-current="page">Log in</a></li>
+          <li data-auth="in" hidden><a href="dashboard.html">Dashboard</a></li>
+          <li data-auth="in" hidden><button type="button" id="logout-btn" class="nav-btn">Log out</button></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="container narrow">
+    <h1>Student portal</h1>
+    <div id="auth-message" aria-live="polite" hidden></div>
+
+    <div id="signed-in" hidden></div>
+
+    <div id="auth-forms">
+      <div class="tabs" role="tablist" aria-label="Account access">
+        <button type="button" role="tab" id="tab-login" aria-controls="panel-login" aria-selected="true">Log in</button>
+        <button type="button" role="tab" id="tab-register" aria-controls="panel-register" aria-selected="false" tabindex="-1">Create account</button>
+      </div>
+
+      <section id="panel-login" role="tabpanel" aria-labelledby="tab-login">
+        <form id="login-form" class="form" novalidate>
+          <div class="field">
+            <label for="login-email">Email address</label>
+            <input type="email" id="login-email" name="email" autocomplete="email" required aria-describedby="login-email-err">
+            <p class="field-error" id="login-email-err" hidden></p>
+          </div>
+          <div class="field">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" name="password" autocomplete="current-password" required aria-describedby="login-password-err">
+            <p class="field-error" id="login-password-err" hidden></p>
+          </div>
+          <div class="actions"><button type="submit" class="btn">Log in</button></div>
+        </form>
+        <p class="divider"><span>or</span></p>
+        <button type="button" class="btn btn-google google-btn"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.2 5.5-4.7 7.2l7.6 5.9c4.4-4.1 6.9-10.1 6.9-17.6z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 0 1 0-9.4l-7.9-6.1a24 24 0 0 0 0 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg> Continue with Google</button>
+      </section>
+
+      <section id="panel-register" role="tabpanel" aria-labelledby="tab-register" hidden>
+        <form id="register-form" class="form" novalidate>
+          <div class="field">
+            <label for="reg-name">Full name</label>
+            <input type="text" id="reg-name" name="fullName" autocomplete="name" required maxlength="120" aria-describedby="reg-name-err">
+            <p class="field-error" id="reg-name-err" hidden></p>
+          </div>
+          <div class="field">
+            <label for="reg-email">Email address</label>
+            <input type="email" id="reg-email" name="email" autocomplete="email" required aria-describedby="reg-email-err">
+            <p class="field-error" id="reg-email-err" hidden></p>
+          </div>
+          <div class="field">
+            <label for="reg-password">Password</label>
+            <input type="password" id="reg-password" name="password" autocomplete="new-password" required aria-describedby="reg-password-hint reg-password-err">
+            <p class="hint" id="reg-password-hint">At least 8 characters, with a letter and a number.</p>
+            <p class="field-error" id="reg-password-err" hidden></p>
+          </div>
+          <div class="field">
+            <label for="reg-confirm">Confirm password</label>
+            <input type="password" id="reg-confirm" name="confirm" autocomplete="new-password" required aria-describedby="reg-confirm-err">
+            <p class="field-error" id="reg-confirm-err" hidden></p>
+          </div>
+          <p class="hint">New accounts are pending until a campus administrator approves them.</p>
+          <div class="actions"><button type="submit" class="btn">Create account</button></div>
+        </form>
+        <p class="divider"><span>or</span></p>
+        <button type="button" class="btn btn-google google-btn"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.2 5.5-4.7 7.2l7.6 5.9c4.4-4.1 6.9-10.1 6.9-17.6z"/><path fill="#FBBC05" d="M10.5 28.7a14.5 14.5 0 0 1 0-9.4l-7.9-6.1a24 24 0 0 0 0 21.6l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg> Continue with Google</button>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p>&copy; 2026 Polytechnic University of the Philippines &ndash; Unisan Campus. All rights reserved.</p>
+      <p><a href="privacy.html">Privacy Policy</a></p>
+      <p>Contact: <a href="mailto:unisan@pup.edu.ph">unisan@pup.edu.ph</a></p>
+      <p>Follow us: Facebook</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
