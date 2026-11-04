@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Polytechnic University of the Philippines – Unisan Campus</title>
   <meta name="description" content="PUP Unisan Campus has served the youth of Unisan, Quezon since 1987, offering accessible, quality higher education rooted in PUP's mission of national development.">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body data-page="index">
@@ -15,7 +16,7 @@
         <span class="brand-mark" aria-hidden="true">PUP</span>
         <span class="brand-text"><strong>Polytechnic University of the Philippines</strong><span>Unisan Campus &middot; <em>Tanglaw ng Bayan</em></span></span>
       </a>
-      <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+      <button type="button" class="nav-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span><span></span></button>
       <nav id="site-nav" aria-label="Main">
         <ul>
           <li><a href="index.html" aria-current="page">Home</a></li>
@@ -26,7 +27,6 @@
           <li><a href="admission.html">Admissions</a></li>
           <li><a href="faculty.html">Faculty</a></li>
           <li><a href="contact.html">Contact</a></li>
-          <li data-auth="out"><a href="login.html">Log in</a></li>
           <li data-auth="in" hidden><a href="dashboard.html">Dashboard</a></li>
           <li data-auth="in" hidden><button type="button" id="logout-btn" class="nav-btn">Log out</button></li>
         </ul>
@@ -39,11 +39,41 @@
       <div class="hero-inner">
         <h1 id="site-title">Polytechnic University of the Philippines &ndash; Unisan Campus</h1>
         <p class="hero-motto">&ldquo;Tanglaw ng Bayan&rdquo; <span>(Light of the Nation)</span></p>
-        <p class="hero-est">Serving Unisan, Quezon since 1987</p>
+        <p class="hero-est">Advancing knowledge, skills, and service for a better tomorrow.</p>
+        <div class="hero-actions"><a class="btn btn-gold" href="programs.html">Explore Programs <span aria-hidden="true">→</span></a><a class="btn btn-outline-light" href="#about">Learn More</a></div>
       </div>
     </section>
 
-    <div class="container with-aside">
+    <nav class="quick-actions" aria-label="Featured pages">
+      <a href="programs.html">
+        <svg class="quick-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m2 9 10-5 10 5-10 5L2 9Zm4 3.1V17c3.6 2.7 8.4 2.7 12 0v-4.9l-6 3-6-3Zm14-1.2v5.6h2v-6.6l-2 1Z"/></svg>
+        <span>Programs</span>
+      </a>
+      <a href="faculty.html">
+        <svg class="quick-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm6-1a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM2 20v-2c0-3 3-5 7-5s7 2 7 5v2H2Zm14-6.8c3.5.4 6 2.2 6 4.8v2h-4v-2c0-2-.7-3.6-2-4.8Z"/></svg>
+        <span>Faculty</span>
+      </a>
+      <a href="announcements.html">
+        <svg class="quick-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 10v4h3l11 5V5L6 10H3Zm3 6 2 5h4l-2.2-4.1L6 16Zm14-7v6a3 3 0 0 0 0-6Z"/></svg>
+        <span>Announcements</span>
+      </a>
+      <a href="admission.html">
+        <svg class="quick-action-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2 3 6v6c0 5 3.8 8.7 9 10 5.2-1.3 9-5 9-10V6l-9-4Zm-1 14-4-4 1.4-1.4L11 13.2l5.6-5.6L18 9l-7 7Z"/></svg>
+        <span>Admission</span>
+      </a>
+    </nav>
+
+    <section class="latest-announcements" aria-labelledby="latest-announcements-title">
+      <header class="latest-announcements-head">
+        <h2 id="latest-announcements-title">Latest Announcements</h2>
+        <a href="announcements.html">Announcements</a>
+      </header>
+      <section id="announcements-list" data-limit="1" aria-live="polite">
+        <p class="state state-loading" role="status">Loading announcements…</p>
+      </section>
+    </section>
+
+    <section class="page-container with-aside">
       <div class="stack">
         <section id="about">
           <h2>Welcome to PUP Unisan</h2>
@@ -56,7 +86,7 @@
           <p>PUP Unisan was established in 1987, originally conceived by local officials as a contribution to the welfare of out-of-school youth in the area. It began as a vocational-technical school before growing into a full satellite campus of the Polytechnic University of the Philippines, now offering undergraduate degree programs to students across the Unisan area and neighboring towns.</p>
         </section>
 
-        <div class="two-col">
+        <section class="two-col" aria-label="Campus vision and mission">
           <section id="vision">
             <h2>Vision</h2>
             <p>A Leading Comprehensive Polytechnic University in Asia.</p>
@@ -65,7 +95,7 @@
             <h2>Mission</h2>
             <p>Advance an Inclusive, Equitable, and Globally Relevant Polytechnic Education Towards National Development.</p>
           </section>
-        </div>
+        </section>
 
         <section id="quick-facts">
           <h2>Quick Facts</h2>
@@ -88,7 +118,7 @@
           <li><a href="contact.html#map">Campus Map</a></li>
         </ul>
       </aside>
-    </div>
+    </section>
   </main>
 
   <footer class="site-footer">
@@ -102,5 +132,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
   <script type="module" src="js/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>

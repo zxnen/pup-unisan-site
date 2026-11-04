@@ -1,8 +1,8 @@
 import { el } from './dom.js';
 
 export function dataTable({ caption, columns, rows }) {
-  return el('div', { class: 'table-wrap' },
-    el('table', { class: 'data-table' },
+  return el('div', { class: 'table-wrap table-responsive' },
+    el('table', { class: 'data-table table table-striped align-middle' },
       el('caption', { class: 'sr-only', text: caption }),
       el('thead', {}, el('tr', {}, columns.map((c) => el('th', { scope: 'col', text: c.label })))),
       el('tbody', {}, rows.map((r) => el('tr', {}, columns.map((c) => {

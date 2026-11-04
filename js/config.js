@@ -6,3 +6,7 @@
 // with SUPABASE_URL and SUPABASE_ANON_KEY set). Netlify: the build command generates this file.
 export const SUPABASE_URL = 'https://nphtdzersriivwtwbfhc.supabase.co';
 export const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_AxIC13IYVAZdmSVuLKXSLQ_5ifHKpid';
+// The faculty directory uses its own Supabase project. Leave blank until configured.
+export const FACULTY_SUPABASE_URL = '';
+export const FACULTY_SUPABASE_PUBLISHABLE_KEY = '';
+export const TURNSTILE_SITE_KEY = '';

@@ -6,6 +6,9 @@
 [build.environment]
   NODE_VERSION = "20"
 
+[functions]
+  directory = "netlify/functions"
+
 # Public pages only. Keep SUPABASE_URL and SUPABASE_ANON_KEY (public values) in Netlify's
 # environment variables. NEVER add the service-role key, DB password or OAuth secret here.
 
@@ -18,7 +21,7 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     # Report-Only first: load every page, check the browser console for violations, then rename
     # this header to Content-Security-Policy to enforce it.
-    Content-Security-Policy-Report-Only = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self'; img-src 'self' https: data:; connect-src 'self' https://*.supabase.co; frame-src https://www.youtube.com https://maps.google.com https://www.google.com; object-src 'none'; base-uri 'self'; form-action 'self'"
+    Content-Security-Policy-Report-Only = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; style-src 'self' https://cdn.jsdelivr.net; img-src 'self' https: data:; connect-src 'self' https://*.supabase.co https://*.supabase.in https://challenges.cloudflare.com; frame-src https://www.youtube.com https://maps.google.com https://www.google.com https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'"
 
 [[headers]]
   for = "/js/config.js"

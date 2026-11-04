@@ -1,6 +1,8 @@
 import { supabase } from '../supabaseClient.js';
 import { unwrap } from './errors.js';
 import { sanitizeSearch } from './validators.js';
+import { facultySupabase, facultyConfigurationMessage } from '../facultySupabaseClient.js';
+import { supabase as mainSupabase } from '../supabaseClient.js';
 
 // Generic repository for programs / faculty / announcements. Public reads rely on RLS
 // (anonymous visitors only ever receive published programs/announcements); the explicit
@@ -55,10 +57,52 @@ export const announcementsModel = repository('announcements', {
   order: [{ col: 'published_at', asc: false }, { col: 'created_at', asc: false }],
   searchCols: ['title', 'content'], published: true,
 });
-export const facultyModel = repository('faculty', {
-  order: [{ col: 'display_order', asc: true }, { col: 'name', asc: true }],
-  searchCols: ['name', 'position', 'department'], published: false,
+export const siteSettingsModel = repository('site_settings', {
+  order: [{ col: 'key', asc: true }], searchCols: ['key','value'], published: false,
 });
+export const facultyModel = {
+  async listPublic() {
+    if (!facultySupabase) throw new Error(facultyConfigurationMessage());
+    const { data, error } = await facultySupabase.from('faculty').select('*')
+      .order('display_order', { ascending: true }).order('name', { ascending: true });
+    return unwrap({ data, error }, 'Could not load faculty from the faculty database.');
+  },
+  async listAdmin({ search = '', page = 0, pageSize = 10 } = {}) {
+    if (!facultySupabase) throw new Error(facultyConfigurationMessage());
+    let q = facultySupabase.from('faculty').select('*', { count: 'exact' });
+    const s = sanitizeSearch(search);
+    if (s) q = q.or(['name','position','department'].map((c) => `${c}.ilike.%${s}%`).join(','));
+    const { data, error, count } = await q.order('display_order').order('name')
+      .range(page * pageSize, page * pageSize + pageSize - 1);
+    unwrap({ data, error }, 'Could not load faculty records.');
+    return { rows: data, total: count ?? 0 };
+  },
+  async create(values) { return facultyWrite('POST', values); },
+  async update(id, values) { return facultyWrite('PATCH', { id, ...values }); },
+  async remove(id) {
+    await facultyWrite('DELETE', { id });
+  },
+  async count() {
+    if (!facultySupabase) return null;
+    const { count, error } = await facultySupabase.from('faculty').select('id', { count: 'exact', head: true });
+    unwrap({ data: true, error }, 'Could not load faculty count.');
+    return count ?? 0;
+  },
+  async countPublished() { return this.count(); },
+};
+
+async function facultyWrite(method, values) {
+  const { data: { session } } = await mainSupabase.auth.getSession();
+  if (!session) throw new Error('Sign in with an administrator account to manage faculty.');
+  const response = await fetch('/.netlify/functions/faculty', {
+    method,
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+    body: JSON.stringify(values),
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || 'Could not save the faculty record.');
+  return result.data;
+}
 
 // Used only when no program is published yet, so the admissions/profile dropdowns still
 // offer the original eight programs from the supplied admission.html.

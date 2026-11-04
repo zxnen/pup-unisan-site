@@ -49,7 +49,7 @@ export async function studentsSection(container, ctx) {
   async function review(row, next) {
     const who = row.full_name || row.email;
     if (next === 'rejected') {
-      const ok = await confirmDialog({ title: 'Reject this account?', message: `${who} will lose access to student features and cannot submit inquiries.`, confirmText: 'Reject account' });
+      const ok = await confirmDialog({ title: 'Reject this account?', message: `${who} will lose access to student portal features. Public campus inquiries remain available without an account.`, confirmText: 'Reject account' });
       if (!ok) return;
     }
     try { await reviewStudent(row.id, next); announce(`${who} ${next === 'approved' ? 'approved' : 'rejected'}.`); load(); }

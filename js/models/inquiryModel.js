@@ -2,15 +2,22 @@ import { supabase } from '../supabaseClient.js';
 import { unwrap } from './errors.js';
 import { sanitizeSearch } from './validators.js';
 
-// user_id is intentionally NOT sent: the database fills it from the authenticated session,
-// and RLS rejects the insert unless the caller is an approved student.
+const VISITOR_KEY = 'pup-unisan-visitor-id-v1';
+
 export async function createInquiry(v) {
-  const { category, subject, message, phone, program_of_interest, preferred_contact } = v;
-  return unwrap(
-    await supabase.from('inquiries')
-      .insert({ category, subject, message, phone, program_of_interest, preferred_contact })
-      .select().single(),
-    'Your inquiry could not be sent.');
+  let session = null;
+  try { session = supabase ? (await supabase.auth.getSession()).data?.session || null : null; } catch { /* Public inquiry submission remains available without a session. */ }
+  const response = await fetch('/.netlify/functions/inquiries', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+    },
+    body: JSON.stringify({ ...v, visitor_id: getVisitorId() }),
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || 'Your inquiry could not be sent.');
+  return result;
 }
 
 export async function listMyInquiries({ page = 0, pageSize = 10 } = {}) {
@@ -28,7 +35,7 @@ export async function listAllInquiries({ search = '', status = '', category = ''
   if (status) q = q.eq('status', status);
   if (category) q = q.eq('category', category);
   const s = sanitizeSearch(search);
-  if (s) q = q.or(`subject.ilike.%${s}%,message.ilike.%${s}%`);
+  if (s) q = q.or(`subject.ilike.%${s}%,message.ilike.%${s}%,full_name.ilike.%${s}%,email.ilike.%${s}%`);
   q = q.order('created_at', { ascending: false }).range(page * pageSize, page * pageSize + pageSize - 1);
   const { data, error, count } = await q;
   unwrap({ data, error }, 'Could not load inquiries.');
@@ -37,7 +44,7 @@ export async function listAllInquiries({ search = '', status = '', category = ''
 
 export async function updateInquiry(id, { status, admin_response }) {
   return unwrap(
-    await supabase.from('inquiries').update({ status, admin_response }).eq('id', id).select().single(),
+    await supabase.from('inquiries').update({ status, admin_response, requires_review: false }).eq('id', id).select().single(),
     'Could not save the inquiry.');
 }
 
@@ -55,4 +62,14 @@ export async function countByStatus() {
     out[s] = count ?? 0;
   }
   return out;
+}
+
+function getVisitorId() {
+  try {
+    let id = localStorage.getItem(VISITOR_KEY);
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id || '')) {
+      id = crypto.randomUUID(); localStorage.setItem(VISITOR_KEY, id);
+    }
+    return id;
+  } catch { return crypto.randomUUID(); }
 }

@@ -18,8 +18,9 @@ export async function adminInquiriesSection(container, ctx = {}) {
     return s;
   };
   container.append(
-    el('div', { class: 'section-head' }, el('h2', { text: 'Inquiries' })),
-    searchBar({ placeholder: 'Subject or message', onSearch: (v) => { search = v; page = 0; load(); }, extra: [
+    el('div', { class: 'section-head' }, el('h2', { text: 'Inquiries' }),
+      el('p', { class: 'hint', text: 'Public inquiries include the visitor’s name and email. Saving a review clears any review flag.' })),
+    searchBar({ placeholder: 'Name, email, subject or message', onSearch: (v) => { search = v; page = 0; load(); }, extra: [
       el('div', { class: 'field field-inline' }, el('label', { for: 'inq-status', text: 'Status' }),
         mkSel('inq-status', 'All statuses', INQUIRY_STATUSES.map((s) => [s, label(s)]), status, (v) => { status = v; })),
       el('div', { class: 'field field-inline' }, el('label', { for: 'inq-cat', text: 'Category' }),
@@ -36,7 +37,8 @@ export async function adminInquiriesSection(container, ctx = {}) {
       clear(list).append(
         dataTable({ caption: 'Inquiries', rows, columns: [
           { label: 'Received', render: (r) => formatDate(r.created_at) },
-          { label: 'From', render: (r) => r.profiles?.full_name || r.profiles?.email || 'Unknown' },
+          { label: 'From', render: (r) => `${r.full_name || r.profiles?.full_name || 'Unknown'}${r.email || r.profiles?.email ? ` · ${r.email || r.profiles?.email}` : ''}` },
+          { label: 'Review', render: (r) => r.requires_review ? badge('Needs review', 'warn') : '—' },
           { label: 'Category', render: (r) => label(r.category) },
           { key: 'subject', label: 'Subject' },
           { label: 'Status', render: (r) => badge(label(r.status), KIND[r.status]) },
@@ -50,8 +52,11 @@ export async function adminInquiriesSection(container, ctx = {}) {
 
   function review(row) {
     const p = row.profiles || {};
+    const name = row.full_name || p.full_name || 'Unknown';
+    const email = row.email || p.email || '';
     const details = el('dl', { class: 'details' },
-      el('dt', { text: 'From' }), el('dd', { text: `${p.full_name || 'Unknown'}${p.email ? ` (${p.email})` : ''}` }),
+      el('dt', { text: 'From' }), el('dd', { text: `${name}${email ? ` (${email})` : ''}` }),
+      row.requires_review ? [el('dt', { text: 'Review flag' }), el('dd', { text: 'This visitor has a previous abuse restriction. Saving this review will clear the flag.' })] : null,
       p.student_number ? [el('dt', { text: 'Student number' }), el('dd', { text: p.student_number })] : null,
       el('dt', { text: 'Category' }), el('dd', { text: label(row.category) }),
       el('dt', { text: 'Subject' }), el('dd', { text: row.subject }),
@@ -64,8 +69,8 @@ export async function adminInquiriesSection(container, ctx = {}) {
       title: 'Review inquiry', extra: details, submitText: 'Save response', values: row,
       fields: [
         { name: 'status', label: 'Status', type: 'select', required: true, blank: '— Choose status —', options: INQUIRY_STATUSES.map((s) => [s, label(s)]) },
-        { name: 'admin_response', label: 'Response to the student', type: 'textarea', rows: 5, maxlength: 2000,
-          help: 'The student can read this response in their dashboard.' },
+        { name: 'admin_response', label: 'Campus response', type: 'textarea', rows: 5, maxlength: 2000,
+          help: row.user_id ? 'The signed-in student can read this response in their dashboard.' : `This visitor sent the inquiry without an account. Contact them at ${email || 'the email address above'}.` },
       ],
       onSubmit: async (raw) => {
         const r = validateInquiryUpdate(raw);

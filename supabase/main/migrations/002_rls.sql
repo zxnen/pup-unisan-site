@@ -1,0 +1,36 @@
+alter table public.profiles enable row level security;
+alter table public.programs enable row level security;
+alter table public.announcements enable row level security;
+alter table public.site_settings enable row level security;
+alter table public.inquiries enable row level security;
+
+create policy "profiles read self or admin" on public.profiles for select to authenticated using (id=auth.uid() or public.is_admin());
+create policy "profile self update or admin" on public.profiles for update to authenticated using (id=auth.uid() or public.is_admin()) with check (id=auth.uid() or public.is_admin());
+create policy "programs public published or admin" on public.programs for select to anon,authenticated using (is_published or public.is_admin());
+create policy "programs admin insert" on public.programs for insert to authenticated with check (public.is_admin());
+create policy "programs admin update" on public.programs for update to authenticated using (public.is_admin()) with check (public.is_admin());
+create policy "programs admin delete" on public.programs for delete to authenticated using (public.is_admin());
+create policy "announcements public published or admin" on public.announcements for select to anon,authenticated using (is_published or public.is_admin());
+create policy "announcements admin insert" on public.announcements for insert to authenticated with check (public.is_admin());
+create policy "announcements admin update" on public.announcements for update to authenticated using (public.is_admin()) with check (public.is_admin());
+create policy "announcements admin delete" on public.announcements for delete to authenticated using (public.is_admin());
+create policy "public settings read" on public.site_settings for select to anon,authenticated using (is_public or public.is_admin());
+create policy "site settings admin insert" on public.site_settings for insert to authenticated with check (public.is_admin());
+create policy "site settings admin update" on public.site_settings for update to authenticated using (public.is_admin()) with check (public.is_admin());
+create policy "site settings admin delete" on public.site_settings for delete to authenticated using (public.is_admin());
+create policy "inquiries owner or admin read" on public.inquiries for select to authenticated using (user_id=auth.uid() or public.is_admin());
+create policy "approved students create own inquiry" on public.inquiries for insert to authenticated with check (user_id=auth.uid() and exists (select 1 from public.profiles p where p.id=auth.uid() and p.role='student' and p.approval_status='approved'));
+create policy "admins update inquiries" on public.inquiries for update to authenticated using (public.is_admin()) with check (public.is_admin());
+create policy "admins delete inquiries" on public.inquiries for delete to authenticated using (public.is_admin());
+
+revoke all on public.profiles,public.programs,public.announcements,public.site_settings,public.inquiries from anon,authenticated;
+grant select on public.profiles to authenticated;
+grant update(full_name,student_number,program,year,phone,address,birthdate) on public.profiles to authenticated;
+grant select,insert,update,delete on public.programs,public.announcements to authenticated;
+grant select on public.programs,public.announcements to anon;
+grant select on public.site_settings to anon;
+grant select,insert,update,delete on public.site_settings to authenticated;
+grant select on public.inquiries to authenticated;
+grant insert(category,subject,message,phone,program_of_interest,preferred_contact) on public.inquiries to authenticated;
+grant update(status,admin_response) on public.inquiries to authenticated;
+grant delete on public.inquiries to authenticated;

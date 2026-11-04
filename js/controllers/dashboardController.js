@@ -7,7 +7,9 @@ import { profileSection } from './dashboard/profileSection.js';
 import { studentInquiriesSection } from './dashboard/studentInquiriesSection.js';
 import { studentsSection } from './dashboard/studentsSection.js';
 import { adminInquiriesSection } from './dashboard/inquiriesSection.js';
-import { programsSection, facultySection, announcementsSection } from './dashboard/manageSections.js';
+import { programsSection, facultySection, announcementsSection, siteContentSection } from './dashboard/manageSections.js';
+import { moderationSection } from './dashboard/moderationSection.js';
+import { mediaSection } from './dashboard/mediaSection.js';
 
 const ALL = {
   overview: { title: 'Overview', render: overviewSection },
@@ -16,6 +18,9 @@ const ALL = {
   programs: { title: 'Programs', render: programsSection },
   faculty: { title: 'Faculty', render: facultySection },
   announcements: { title: 'Announcements', render: announcementsSection },
+  sitecontent: { title: 'Homepage & identity', render: siteContentSection },
+  moderation: { title: 'Comments & safety', render: moderationSection },
+  media: { title: 'Media library', render: mediaSection },
   profile: { title: 'My profile', render: profileSection },
   myinquiries: { title: 'My inquiries', render: studentInquiriesSection },
 };
@@ -23,7 +28,7 @@ const ALL = {
 // Which sections to OFFER, based on the profile read from the database. This only decides what
 // the interface shows; Supabase RLS independently refuses anything the user is not entitled to.
 function allowedSections(p) {
-  if (p.role === 'admin' && p.approval_status === 'approved') return ['overview', 'students', 'inquiries', 'programs', 'faculty', 'announcements', 'profile'];
+  if (p.role === 'admin' && p.approval_status === 'approved') return ['overview', 'students', 'inquiries', 'programs', 'faculty', 'announcements', 'sitecontent', 'moderation', 'media', 'profile'];
   if (p.role === 'student' && p.approval_status === 'approved') return ['profile', 'myinquiries'];
   return ['profile']; // pending, rejected, or an unapproved admin: basic profile only
 }

@@ -8,7 +8,7 @@ export const INQUIRY_CATEGORIES = ['admissions', 'general'];
 export const PROGRAM_LEVELS = ['Bachelor', 'Diploma', 'Master'];
 export const APPROVAL_STATUSES = ['pending', 'approved', 'rejected'];
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_RE = /^[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])$/i;
 const PHONE_RE = /^[0-9+() -]{7,20}$/;
 const STUNO_RE = /^[A-Za-z0-9-]{4,20}$/;
 const CODE_RE = /^[A-Z0-9-]{2,12}$/;
@@ -21,7 +21,11 @@ const len = (s, min, max, label, errors, key) => {
   else if (s.length > max) errors[key] = `${label} must be ${max} characters or fewer.`;
 };
 
-export function validateEmail(email) { return EMAIL_RE.test(clean(email)); }
+export function validateEmail(email) {
+  const value = clean(email);
+  const [local = ''] = value.split('@');
+  return value.length <= 254 && local.length <= 64 && !local.startsWith('.') && !local.endsWith('.') && !local.includes('..') && EMAIL_RE.test(value);
+}
 
 export function validatePassword(pw) {
   if (typeof pw !== 'string' || pw.length < 8) return 'Password must be at least 8 characters.';
@@ -98,6 +102,20 @@ export function validateInquiry(input) {
   if (pref && !['email', 'phone'].includes(pref)) errors.preferred_contact = 'Choose email or phone.';
   if (pref === 'phone' && !phone) errors.phone = 'Add a phone number if you prefer to be contacted by phone.';
   return finish(errors, { category, subject, message, phone, program_of_interest: program, preferred_contact: pref });
+}
+
+export function validatePublicInquiry(input) {
+  const errors = {};
+  const full_name = clean(input.full_name);
+  len(full_name, 2, 120, 'Full name', errors, 'full_name');
+  const email = clean(input.email).toLowerCase();
+  if (!validateEmail(email) || email.length > 254) errors.email = 'Enter a valid email address.';
+  const category = clean(input.category) || 'general';
+  if (!INQUIRY_CATEGORIES.includes(category)) errors.category = 'Choose a valid category.';
+  const message = clean(input.message);
+  if (message.length > 2000) errors.message = 'Message must be 2000 characters or fewer.';
+  else if (message && message.length < 3) errors.message = 'Message must be at least 3 characters.';
+  return finish(errors, { full_name, email, category, subject: category === 'admissions' ? 'Admissions inquiry' : 'General inquiry', message });
 }
 
 export function validateInquiryUpdate(input) {

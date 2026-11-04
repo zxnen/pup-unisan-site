@@ -1,4 +1,4 @@
-import { el, clear } from './dom.js';
+import { el, clear, safeUrl } from './dom.js';
 
 let uid = 0;
 
@@ -14,10 +14,10 @@ export function buildField(f, value) {
   };
   let control;
   if (f.type === 'textarea') {
-    control = el('textarea', { ...common, rows: f.rows || 4 });
+    control = el('textarea', { ...common, class: 'form-control', rows: f.rows || 4 });
     control.value = value ?? '';
   } else if (f.type === 'select') {
-    control = el('select', { ...common }, el('option', { value: '', text: f.blank || '— Select —' }),
+    control = el('select', { ...common, class: 'form-select' }, el('option', { value: '', text: f.blank || '— Select —' }),
       (f.options || []).map(([v, t]) => el('option', { value: v, text: t })));
     control.value = value ?? '';
   } else if (f.type === 'checkbox') {
@@ -28,12 +28,27 @@ export function buildField(f, value) {
       f.help ? el('p', { class: 'hint', id: hintId, text: f.help }) : null,
       el('p', { class: 'field-error', id: errId, hidden: true }));
   } else {
-    control = el('input', { ...common, type: f.type || 'text', min: f.min, max: f.max, inputmode: f.inputmode });
+    control = el('input', { ...common, class: 'form-control', type: f.type || 'text', min: f.min, max: f.max, inputmode: f.inputmode });
     control.value = value ?? '';
+  }
+  let preview = null;
+  if (f.preview) {
+    preview = el('img', { class: 'form-image-preview', alt: '', hidden: true });
+    const updatePreview = () => {
+      const raw = String(control.value || '').trim();
+      const url = /^https?:\/\//i.test(raw) ? safeUrl(raw) : null;
+      preview.hidden = !url;
+      if (url) preview.src = url;
+      else preview.removeAttribute('src');
+    };
+    control.addEventListener('input', updatePreview);
+    control.addEventListener('change', updatePreview);
+    updatePreview();
   }
   return el('div', { class: 'field' },
     el('label', { for: id }, f.label, f.required ? el('span', { class: 'req', 'aria-hidden': 'true', text: ' *' }) : null),
     control,
+    preview,
     f.help ? el('p', { class: 'hint', id: hintId, text: f.help }) : null,
     el('p', { class: 'field-error', id: errId, hidden: true }));
 }

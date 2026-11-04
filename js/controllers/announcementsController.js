@@ -11,8 +11,10 @@ export async function init() {
     try {
       const rows = await announcementsModel.listPublic();
       if (!rows.length) return empty(host, 'No announcements right now.', 'New announcements will appear here when they are published.');
+      const limit = Number(host.dataset.limit);
+      const visibleRows = Number.isInteger(limit) && limit > 0 ? rows.slice(0, limit) : rows;
       clear(host);
-      for (const a of rows) {
+      for (const a of visibleRows) {
         host.append(el('article', { class: 'announcement' },
           el('h2', { text: a.title }),
           el('p', { class: 'meta' }, el('time', { datetime: a.published_at, text: formatDate(a.published_at) })),
