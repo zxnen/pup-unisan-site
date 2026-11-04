@@ -9,4 +9,4 @@ export const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_AxIC13IYVAZdmSVuLKXSLQ_5
 // The faculty directory uses its own Supabase project. Leave blank until configured.
 export const FACULTY_SUPABASE_URL = '';
 export const FACULTY_SUPABASE_PUBLISHABLE_KEY = '';
-export const TURNSTILE_SITE_KEY = '';
+export const TURNSTILE_SITE_KEY = '0x4AAAAAAFzucY3zV9JB-psk';
