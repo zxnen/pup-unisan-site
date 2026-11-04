@@ -5,7 +5,19 @@ const restHeaders = () => ({ apikey: serviceKey(), Authorization: `Bearer ${serv
 const validId = (id) => /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id || '');
 
 export default async (request) => {
-  if (!mainUrl() || !serviceKey() || !publicKey()) return json(503, { error: 'Moderation is not configured on the server.' });
+ const configStatus = {
+  hasSupabaseUrl: Boolean(mainUrl()),
+  hasServiceRoleKey: Boolean(serviceKey()),
+  hasPublicKey: Boolean(publicKey()),
+};
+
+if (Object.values(configStatus).some((value) => !value)) {
+  console.error('Moderation configuration check failed:', configStatus);
+
+  return json(503, {
+    error: 'Moderation is not configured on the server.'
+  });
+}
   const bearer = request.headers.get('authorization') || '';
   const token = bearer.startsWith('Bearer ') ? bearer.slice(7) : '';
   if (!token) return json(401, { error: 'Administrator sign-in required.' });
