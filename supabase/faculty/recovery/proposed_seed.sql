@@ -1,0 +1,29 @@
+-- PUP Unisan faculty recovery seed template.
+-- Source audit: no faculty row values or portraits were recoverable from Git history.
+-- This template is intentionally commented out: do not run it until verified source
+-- records are supplied. It matches supabase/faculty/migrations/001_faculty.sql.
+-- Do not replace missing values with guesses or reuse campus artwork as portraits.
+--
+-- insert into public.faculty (
+--   name,
+--   position,
+--   department,
+--   group_label,
+--   email,
+--   bio,
+--   image_url,
+--   qualifications,
+--   professional_info,
+--   display_order
+-- ) values (
+--   '<verified full name>',
+--   '<verified position or academic rank>',
+--   '<verified department>',
+--   '<verified directory group, if available>',
+--   '<verified email, or null>',
+--   '<verified biography, or null>',
+--   '<verified portrait URL, or null>',
+--   '<verified educational qualifications, or null>',
+--   '<verified professional information, or null>',
+--   0
+-- );
